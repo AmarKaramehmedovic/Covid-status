@@ -1,0 +1,21 @@
+1
+GLAVOBOLJA
+RIJETKO
+2
+TEMPERATURA
+SREDNJE
+3
+GRLOBOLJA
+ČESTO
+4
+krizobolja
+SREDNJE
+5
+nogobolja
+ČESTO
+6
+rukobolja
+RIJETKO
+7
+Novi simp1
+SREDNJE

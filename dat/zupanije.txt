@@ -1,0 +1,56 @@
+1
+GRAD ZAGREB
+1000000
+20000
+2
+MEĐIMURSKA
+100000
+500
+3
+VARAŽDINSKA
+200000
+10004
+4
+SISAK
+68686
+680
+5
+vinkovci
+123123
+123
+6
+vukovar
+12314
+162
+7
+rijek
+21340
+213
+8
+Licko senjska
+1045
+14
+9
+dubrovacko neretvanska
+12000
+214
+10
+splitsko
+12302
+141
+11
+Nova Zup 1
+1234
+12
+12
+Nova zup 2
+54321
+321
+13
+Nova zup 3
+2468
+642
+14
+nova zup1
+23
+11

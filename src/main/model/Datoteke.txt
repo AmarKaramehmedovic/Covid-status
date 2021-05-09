@@ -1,0 +1,261 @@
+package main.model;
+
+import main.java.sample.Main;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+public class Datoteke {
+        private static List<Bolest> listaBolesti = new ArrayList<>();
+        private static List<Virus> listaVirusa = new ArrayList<>();
+        private static List<Osoba> tmpListaOsoba = new ArrayList<>();
+
+        public static Set<Zupanija> getSetZupanija() {
+            return Main.setZupanija;
+        }
+        public static Set<Simptom> getSetSimptoma() {
+            return Main.setSimptomi;
+        }
+        public static List<Osoba> getListOsoba() {
+            return Main.listaOsoba;
+        }
+
+        public static List<Bolest> getListBolesti() {
+            return Datoteke.listaBolesti;
+        }
+        public static List<Virus> getListVirusa() {
+            return Datoteke.listaVirusa;
+        }
+        public static List<Osoba> getTmpListOsoba() {
+            return Datoteke.tmpListaOsoba;
+        }
+
+        public static void unosOsoba(Set<Zupanija> setZupanije, Set<Bolest> setBolesti, List<Osoba> listaOsoba) throws IOException {
+            Long id = null;
+            String ime = null;
+            String prezime = null;
+            Integer starost = null;
+            Zupanija zupanija = null;
+            Bolest bolest = null;
+            Virus virus = null;
+            Long zarazenBolescu = null;
+            String[] kontIdList = null;
+            Osoba o = null;
+
+            System.out.println("Ucitavanje osoba...");
+            Path simptomiFile = Path.of("dat/osobe.txt");
+            List<String> linije = Files.readAllLines(simptomiFile);
+
+            int count = 0;
+            for (String l : linije) {
+                switch (count % 7) {
+                    case 0 -> id = Long.parseLong(l);
+                    case 1 -> ime = l;
+                    case 2 -> prezime = l;
+                    case 3 -> starost = Integer.parseInt(l);
+                    case 4 -> zupanija = dohvatiZupaniju(setZupanije, Long.parseLong(l));
+                    case 5 -> zarazenBolescu = Long.parseLong(l);
+                    case 6 -> {
+                        List<Osoba> kontOsobe = new ArrayList<>();
+                        kontIdList = l.split(",");
+
+                        for (Bolest b : setBolesti) {
+                            if (b.getId().equals(zarazenBolescu)) {
+                                bolest = b;
+                            }
+                        }
+                        if(l.equals("0")){
+                            listaOsoba.add(new Osoba.Builder().id(id).ime(ime).prezime(prezime).starost(starost).
+                                    zupanija(zupanija).zarazenBolescu(bolest).build());
+                            tmpListaOsoba.add(new Osoba.Builder().id(id).ime(ime).prezime(prezime).starost(starost).
+                                    zupanija(zupanija).zarazenBolescu(bolest).build());
+                        }else{
+                            for (String k : kontIdList) {
+                                long idKont = Long.parseLong(k);
+                                kontOsobe.add(dohvatiOsobu(listaOsoba, idKont));
+                            }
+                            listaOsoba.add(new Osoba.Builder().id(id).ime(ime).prezime(prezime).starost(starost).
+                                    zupanija(zupanija).zarazenBolescu(bolest).kontOsobe(kontOsobe).build());
+                            tmpListaOsoba.add(new Osoba.Builder().id(id).ime(ime).prezime(prezime).starost(starost).
+                                    zupanija(zupanija).zarazenBolescu(bolest).kontOsobe(kontOsobe).build());
+                        }
+
+                    }
+                }
+                count++;
+            }
+            System.out.println("Kraj učitavanja datoteka, pokretanje JavaFX aplikacije...");
+        }
+
+        /**
+         * metoda u kojoj unosimo podatke o bolesti
+         */
+        public static Bolest unosBolesti(Set<Simptom> setSimptomi, Set<Bolest> setBolesti) throws IOException {
+
+            Bolest b = null;
+            Long id = null;
+            String naziv = null;
+            String[] simpIdList = null;
+            //Simptom[] simpBolesti = null;
+
+            System.out.println("Ucitavanje podataka o bolestima...");
+            Path simptomiFile = Path.of("dat/bolesti.txt");
+            List<String> linije = Files.readAllLines(simptomiFile);
+
+            int count = 0;
+            for (String l : linije) {
+                switch (count % 3) {
+                    case 0 -> id = Long.parseLong(l);
+                    case 1 -> naziv = l;
+                    case 2 -> {
+                        Set<Simptom> simpBolesti = new HashSet<>();
+                        simpIdList = l.split(",");
+
+                        for(String simp : simpIdList){
+                            id = Long.parseLong(simp);
+                            simpBolesti.add(dohvatiSimptom(setSimptomi, id));
+                        }
+                        b = new Bolest(id, naziv, simpBolesti);
+                        setBolesti.add(b);
+                        listaBolesti.add(b);
+                    }
+                }
+                count++;
+            }
+            return b;
+        }
+
+        /**
+         * metoda u kojoj unosimo podatke o virusu
+         */
+        public static Bolest unosVirusa(Set<Simptom> setSimptomi, Set<Bolest> setBolesti) throws IOException {
+            Virus v = null;
+            Long id = null;
+            String naziv = null;
+            String[] simpIdList = null;
+
+            //Simptom[] simpBolesti = null;
+
+            System.out.println("Ucitavanje podataka o virusima...");
+            Path simptomiFile = Path.of("dat/virusi.txt");
+            List<String> linije = Files.readAllLines(simptomiFile);
+
+            int count = 0;
+            for (String l : linije) {
+                switch (count % 3) {
+                    case 0 -> id = Long.parseLong(l);
+                    case 1 -> naziv = l;
+                    case 2 -> {
+                        Set<Simptom> simpVirusa = new HashSet<>();
+                        simpIdList = l.split(",");
+
+                        for(String simp : simpIdList){
+                            id = Long.parseLong(simp);
+                            simpVirusa.add(dohvatiSimptom(setSimptomi, id));
+                        }
+                        v = new Virus(id, naziv, simpVirusa);
+                        setBolesti.add(v);
+                        listaVirusa.add(v);
+                    }
+                }
+                count++;
+            }
+            return v;
+        }
+
+        /**
+         * metoda u kojoj unosimo podatke o bolesti
+         */
+        public static Simptom unosSimptoma(Set<Simptom> setSimptomi) throws IOException {
+            Simptom s = null;
+            Long id = null;
+            String naziv = null;
+            String vrijednost = null;
+
+            System.out.println("Ucitavanje podataka o simptomima...");
+            Path simptomiFile = Path.of("dat/simptomi.txt");
+            List<String> linije = Files.readAllLines(simptomiFile);
+
+            int count = 0;
+            for (String l : linije) {
+                switch (count % 3) {
+                    case 0 -> id = Long.parseLong(l);
+                    case 1 -> naziv = l;
+                    case 2 -> {
+                        vrijednost = l;
+                        s = new Simptom(id, naziv, vrijednost);
+                        setSimptomi.add(s);
+                    }
+                }
+                count++;
+            }
+            //Simptom noviSimptom = new Simptom(id, naziv, vrijednost);
+            //return noviSimptom;
+            return s;
+        }
+
+        /**
+         * metoda u kojoj unosimo podatke o zupanijama
+         */
+        public static Zupanija unosZupanije(Set<Zupanija> setZupanija) throws IOException {
+            Zupanija z = null;
+            Long id = null;
+            String naziv = null;
+            Integer brojStanovnika = 0;
+            Integer brojZarazenih = 0;
+
+            System.out.println("Ucitavanje podataka o zupanijama...");
+            Path zupanijeFile = Path.of("dat/zupanije.txt");
+            List<String> linije = Files.readAllLines(zupanijeFile);
+
+            int count = 0;
+            for (String l : linije) {
+                switch (count % 4) {
+                    case 0 -> id = Long.parseLong(l);
+                    case 1 -> naziv = l;
+                    case 2 -> brojStanovnika = Integer.parseInt(l);
+                    case 3 -> {
+                        brojZarazenih = Integer.parseInt(l);
+                        z = new Zupanija(id, naziv, brojStanovnika, brojZarazenih);
+                        setZupanija.add(z);
+                    }
+                }
+                count++;
+            }
+            return z;
+        }
+
+
+
+
+        public static Simptom dohvatiSimptom(Set<Simptom> setSimptomi, Long id) {
+            return setSimptomi.stream()
+                    .filter(s -> id.equals(s.getId()))
+                    .findAny()
+                    .orElse(null);
+        }
+        public static Bolest dohvatiBolest(Set<Bolest> setBolesti, Long id) {
+            return setBolesti.stream()
+                    .filter(b -> id.equals(b.getId()))
+                    .findAny()
+                    .orElse(null);
+        }
+        public static Zupanija dohvatiZupaniju(Set<Zupanija> setZupanija, Long id) {
+            return setZupanija.stream()
+                    .filter(z -> id.equals(z.getId()))
+                    .findAny()
+                    .orElse(null);
+        }
+        public static Osoba dohvatiOsobu(List<Osoba> listaOsoba, Long id) {
+            return listaOsoba.stream()
+                    .filter(o -> id.equals(o.getId()))
+                    .findAny()
+                    .orElse(null);
+        }
+}
+

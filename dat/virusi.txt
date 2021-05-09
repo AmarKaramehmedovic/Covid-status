@@ -1,0 +1,18 @@
+1
+KONJUKTIVITIS
+1
+2
+HERPES
+1,2
+3
+TRAKAVICA
+1,2,3
+4
+Novi Virus 1
+1
+5
+Novi Virus 2
+1,2
+6
+Novi virus 3
+2,3

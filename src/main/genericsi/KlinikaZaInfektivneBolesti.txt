@@ -1,0 +1,30 @@
+package main.genericsi;
+
+import main.model.Osoba;
+import main.model.Virus;
+
+import java.util.List;
+
+public class KlinikaZaInfektivneBolesti<T extends Virus, S extends Osoba>{
+    private List<T> sviVirusi;
+    private List<S> sveZarazeneOsobe;
+
+    public KlinikaZaInfektivneBolesti(List<T> sviVirusi, List<S> sveZarazeneOsobe) {
+        this.sviVirusi = sviVirusi;
+        this.sveZarazeneOsobe = sveZarazeneOsobe;
+    }
+
+    public List<T> getSviVirusi() {
+        return sviVirusi;
+    }
+    public void setSviVirusi(List<T> sviVirusi) {
+        this.sviVirusi = sviVirusi;
+    }
+
+    public List<S> getSveZarazeneOsobe() {
+        return sveZarazeneOsobe;
+    }
+    public void setSveZarazeneOsobe(List<S> sveZarazeneOsobe) {
+        this.sveZarazeneOsobe = sveZarazeneOsobe;
+    }
+}
